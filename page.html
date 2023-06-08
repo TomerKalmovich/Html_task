@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='utf-8'>
+    <title>Date Converter</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+          $('form').submit(function(event) {
+            event.preventDefault(); // Prevent form submission
+    
+            // Get the form data, verify DD, MM, YYY format
+            var dayValue = $('#day').val().padStart(2, '0');
+            var monthValue = $('#month').val().padStart(2, '0');
+            var yearValue = $('#year').val().padStart(4, '0');
+    
+            // Parse the input values in the format 'YYY-MM-DD'
+            var parsedDate = yearValue + '-' + monthValue + '-' + dayValue;
+    
+            // API URL with the parsed date
+            var apiUrl = 'https://www.hebcal.com/converter?cfg=json&g2h=1&strict=1&date=' + parsedDate;
+    
+            // Make the GET API call
+            $.ajax({
+              url: apiUrl,
+              method: 'GET',
+              dataType: 'json',
+              success: function(response) {
+                // Extract parameters from the response
+                var hyear = response.hy;
+                var hmonth = response.hm;
+                var hday = response.hd;
+                var hebrew = response.hebrew;
+    
+                // Display the parameters with the preceding titles
+                $('#response').html('<p><strong>hebrew year:</strong> ' + hyear + '</p>' +
+                                '<p><strong>hebrew month:</strong> ' + hmonth + '</p>' +
+                                '<p><strong>hebrew day:</strong> ' + hday + '</p>' +
+                                '<p><strong>hebrew:</strong> ' + hebrew + '</p>');
+              },
+              error: function(error) {
+                console.error(error);
+              }
+            });
+          });
+        });
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+          }
+          
+          /* Style the body */
+          body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+          }
+          
+          /* Header/logo Title */
+          .header {
+            padding: 80px;
+            text-align: center;
+            background: #21ddb7;
+            color: white;
+          }
+          
+          /* Font size of the heading */
+          .header h1 {
+            font-size: 40px;
+          }
+          .form {
+            padding: 60px;
+            text-align: center;
+            background-color: white;
+          }
+          .result {
+            padding: 20px;
+            text-align: center;
+            background-color: white;
+          }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>Gregorian to Hebrew date converter</h1>
+        <p>A page that converts gregorian style dates to hebrew style.</p>
+    </div>
+
+    <div class="form">
+        <h2>Insert gregorian style date below:</h2>
+        <form method="get" id="gDate">
+            <label for="day">Day:</label>
+            <input type="number" id="day" name="day" required min="1" max="31">
+            <br><br>
+            <label for="month">Month:</label>
+            <input type="number" id="month" name="month" required min="1" max="12">
+            <br><br>
+            <label for="year">Year:</label>
+            <input type="number" id="year" name="year" required>
+            <br><br>
+            <input type="submit" value="Convert">
+        </form>
+    </div>
+
+    <div class="result">
+        <h2>The hebrew date will be displayed here:</h2>
+        <div id="response"></div>
+    </div>
+
+</body>
+</html>
